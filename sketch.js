@@ -5,10 +5,14 @@
 
 var img;
 var pixel_average = [];
+var pixels_copy = [];
 var fake_i;
+var red_box;
+var green_box;
+var blue_box;
 
 function preload() {
-  img = loadImage("images/boat.jpg");
+  img = loadImage("images/boy.png");
 }
 
 function setup() {
@@ -16,34 +20,32 @@ function setup() {
   background(200, 200, 200);
   image(img, 0, 0); //draw the image to the canvas
 
+  red_box = createCheckbox('Red layer', true);
+  red_box.changed(redCheck);
+  red_box.position(img.width+20, 50);
+
+  green_box = createCheckbox('Green layer', true);
+  green_box.changed(greenCheck);
+  green_box.position(img.width+20, 75);
+
+  blue_box = createCheckbox('Blue layer', true);
+  blue_box.changed(blueCheck);
+  blue_box.position(img.width+20, 100);
+
   loadPixels();
 
-  for (var i = 0; i < pixels.length; i+=4) {
-    if (pixels[i+1] > 135) {
-      pixels[i] = 255;
-      pixels[i+1] = 255;
-      pixels[i+2] = 130;
-    } else {
-      pixels[i] = 100;
-      pixels[i+1] = 200;
-      pixels[i+2] = 100;
-    }    
+  layer(0);
+  layer(1);
+  layer(2);
 
-  //   pixels[i+1] = 0;
-  //   pixels[i+2] = 0;
-  };
-
-  // layer(0, 128);
-  // layer(1, 64);
-  // layer(2, 64);
-
-
+  //copy pixels aray
+  pixels_copy = pixels.map(x => x*1);
 
   updatePixels();
 }
 
 
-function layer(color, step) {
+function layer(color) {
   for (let i = 0; i < pixels.length; i+=4) {
     if (pixels[i+color] >= 194) {
       pixels[i+color] = 255;
@@ -54,50 +56,81 @@ function layer(color, step) {
     } else {
       pixels[i+color] = 64;
     };
-    // fake_i = i;
-    // for (let o = 255; o - step > 0; o-=step) {
-    //   if (pixels[fake_i+color] >= o) {
-    //     pixels[fake_i+color] = o;
-    //   };
-    // };
-  };
+  }; 
 }
 
 
-//function to find the average value of a color in the image. values 0,1,2 for rgb respectively
-function colorAverage(color) {
-  let sum = 0;
-  let avg;
-  let color_mean = [];
+function redCheck() {
+  if (this.checked()) {
 
-  //map the respective pixel value to the color_mean array
-  for (let i = color; i < pixels.length; i+=4) {
-    color_mean.push(pixels[i]);
+    loadPixels();
+
+      for (let i = 0; i < pixels_copy.length; i+=4) {
+        pixels[i] = pixels_copy[i];
+      };
+
+    updatePixels();
+
+  } else {
+
+    loadPixels();
+
+      for (let i = 0; i < pixels.length; i+=4) {
+        pixels[i] = 0;
+      };
+
+    updatePixels();
+
   };
+};
 
-  //finding sum of all values then averaging them out
-  for (let i = 0; i < color_mean.length; i++) {
-    sum += color_mean[i];
+function greenCheck() {
+  if (this.checked()) {
+
+    loadPixels();
+
+      for (let i = 0; i < pixels_copy.length; i+=4) {
+        pixels[i+1] = pixels_copy[i+1];
+      };
+
+    updatePixels();
+
+  } else {
+
+    loadPixels();
+
+      for (let i = 0; i < pixels.length; i+=4) {
+        pixels[i+1] = 0;
+      };
+
+    updatePixels();
+
   };
-  avg = Math.round(sum/color_mean.length);
+};
 
-  return avg;
-}
+function blueCheck() {
+  if (this.checked()) {
 
+    loadPixels();
 
-//average out all the colors in a single pixel
-function pixelAverage() {
-  let sum = 0;
+      for (let i = 0; i < pixels_copy.length; i+=4) {
+        pixels[i+2] = pixels_copy[i+2];
+      };
 
-  for (let i = 0; i < pixels.length; i+=4) {
-    sum = sum + pixels[i] + pixels[i+1] + pixels[i+2];
-    pixel_average.push(sum/3);
-    //push these three zeros to align the average with "pixels" array
-    pixel_average.push(0);
-    pixel_average.push(0);
-    pixel_average.push(0);
-    sum = 0;
+    updatePixels();
+
+  } else {
+
+    loadPixels();
+
+      for (let i = 0; i < pixels.length; i+=4) {
+        pixels[i+2] = 0;
+      };
+
+    updatePixels();
+
   };
-}
+};
+
 
 
