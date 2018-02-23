@@ -12,7 +12,7 @@ var green_box;
 var blue_box;
 
 function preload() {
-  img = loadImage("images/boy.png");
+  img = loadImage("images/boy.PNG");
 }
 
 function setup() {
